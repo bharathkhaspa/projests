@@ -5,6 +5,7 @@ A collection of my portfolio projects, each in its own folder with its own READM
 | Project | What it is | Stack |
 |---|---|---|
 | [passandpay](passandpay/) | Truck-booking & goods-transport platform connecting shippers with truck owners — bookings, payments, live tracking | Django, SQLite, Bootstrap |
+| [junober](junober/) | E-commerce apparel store with a real-time 3D product customizer | React, TypeScript, Three.js, Django REST |
 | [snapscan](snapscan/) | Receipt scanner mobile app: point your camera at a receipt, AI extracts a structured expense | React Native (Expo), Node.js, Claude Vision |
 | [docuchat](docuchat/) | RAG web app — upload PDFs or URLs, ask questions, get answers with citations back to the exact source passage | FastAPI, ChromaDB, Claude API |
 | [triage-agent](triage-agent/) | AI agent that turns messy GitHub-style issues into schema-validated structured output, with an evals harness | Python, Claude API, Pydantic |
@@ -16,3 +17,4 @@ A collection of my portfolio projects, each in its own folder with its own READM
 - Each project folder has its own `README.md` with run instructions.
 - Secrets are never committed — copy each project's `.env.example` to `.env` and fill in your keys.
 - `finetune-lab/model/model.safetensors` (~255 MB trained weights) is excluded from the repo due to GitHub's file-size limit; run `finetune-lab/train.py` to regenerate it.
+- `junober/frontend/public/models/test_tshirt.glb` (~124 MB raw 3D model) is likewise excluded; the optimized GLB the app actually uses is included.
