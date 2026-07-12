@@ -1,0 +1,102 @@
+{% extends "app_base.html" %}
+{% load content_tags booking_tags %}
+{% block title %}Live Tracking — {{ site.brand_name }}{% endblock %}
+{% block app_content %}
+{% if not booking %}
+  <h1 class="h3 fw-800">Live Tracking</h1>
+  <div class="card card-soft p-5 text-center">
+    <div class="stat-icon bg-mist text-brand mx-auto mb-3"><i class="bi bi-geo-alt fs-4"></i></div>
+    <h6 class="fw-bold">Nothing to track yet</h6>
+    <p class="text-muted small">Once a transporter confirms your booking, you'll track it live here.</p>
+    <div><a href="{% url 'shipper:book' %}" class="btn btn-accent btn-sm">Book a Truck</a></div>
+  </div>
+{% else %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div><h1 class="h3 fw-800 mb-0">Live Tracking</h1><p class="text-muted mb-0">Shipment #{{ booking.reference }}</p></div>
+    <span class="badge-status {% status_class booking.status %}">{{ booking.get_status_display }}</span>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      {% route_map booking.origin.latitude booking.origin.longitude booking.destination.latitude booking.destination.longitude booking.current_event.latitude booking.current_event.longitude booking.origin.short_label booking.destination.short_label booking.is_live height=360 %}
+      <div class="card card-soft p-4 mt-3">
+        <h6 class="fw-bold mb-3">Trip status</h6>
+        <ul class="timeline">
+          {% for s in timeline %}
+          <li class="{% if s.reached %}done{% endif %}">
+            <span class="dot">{% if s.reached %}<i class="bi bi-check-lg"></i>{% else %}<span class="rounded-circle bg-current" style="width:7px;height:7px"></span>{% endif %}</span>
+            <div class="fw-600 small {% if not s.reached %}text-muted{% endif %}">{{ s.label }}</div>
+            <div class="text-muted small">{% if s.at %}{{ s.at|date:"j M, g:i A" }}{% else %}Pending{% endif %}</div>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card card-soft p-4 mb-3">
+        <h6 class="fw-bold">Shipment details</h6>
+        <dl class="row small mb-0 mt-2">
+          <dt class="col-5 text-muted fw-normal">Route</dt><dd class="col-7 fw-600">{{ booking.origin.short_label }} → {{ booking.destination.short_label }}</dd>
+          <dt class="col-5 text-muted fw-normal">Truck</dt><dd class="col-7 fw-600">{{ booking.truck_type.name }}</dd>
+          <dt class="col-5 text-muted fw-normal">Goods</dt><dd class="col-7 fw-600">{{ booking.goods_type }}</dd>
+          <dt class="col-5 text-muted fw-normal">Weight</dt><dd class="col-7 fw-600">{{ booking.weight_tons }} ton</dd>
+          <dt class="col-5 text-muted fw-normal">Distance</dt><dd class="col-7 fw-600">{{ booking.distance_km }} km</dd>
+        </dl>
+        <div class="d-flex justify-content-between border-top pt-2 mt-2"><span class="text-muted">Fare</span><span class="fw-800 text-brand">{{ booking.fare_total|inr }}</span></div>
+      </div>
+
+      {% if booking.transporter %}
+      <div class="card card-soft p-4 mb-3">
+        <h6 class="fw-bold">Your transporter</h6>
+        <div class="d-flex justify-content-between align-items-center mt-2">
+          <div><div class="fw-600 small">{{ booking.transporter.display_name }}</div><div class="text-muted small">{{ booking.truck_type.name }}</div></div>
+          <a href="tel:{{ booking.transporter.phone }}" class="btn btn-outline-brand btn-sm"><i class="bi bi-telephone"></i> Call</a>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if booking.status == 'delivered' %}
+      <div class="card card-soft p-4">
+        <div class="text-success fw-600 mb-2"><i class="bi bi-check2-circle"></i> Delivered successfully</div>
+        {% if booking.ratings.all %}
+          <p class="small text-muted mb-0">You rated this trip <span class="text-warning">{{ booking.ratings.first.stars|stars }}</span></p>
+        {% else %}
+          <form method="post" action="{% url 'payments:rate' booking.pk %}">
+            {% csrf_token %}
+            <label class="form-label small fw-600">Rate your transporter</label>
+            <div class="d-flex gap-1 mb-2 fs-4" id="rateStars">
+              {% for i in "12345" %}<i class="bi bi-star text-warning" data-v="{{ forloop.counter }}" role="button"></i>{% endfor %}
+            </div>
+            <input type="hidden" name="stars" id="starsInput" value="5">
+            <button class="btn btn-accent btn-sm w-100"><i class="bi bi-star"></i> Submit rating</button>
+          </form>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if others %}
+  <h6 class="fw-bold mt-4 mb-3">Other shipments</h6>
+  <div class="d-flex gap-3 overflow-auto pb-2">
+    {% for o in others %}
+    <a href="{% url 'shipper:tracking_detail' o.pk %}" class="card card-soft p-3 text-decoration-none text-dark flex-shrink-0" style="min-width:220px">
+      <div class="d-flex justify-content-between"><span class="small font-monospace text-muted">#{{ o.reference }}</span><span class="badge-status {% status_class o.status %}">{{ o.get_status_display }}</span></div>
+      <div class="fw-600 small mt-2">{{ o.origin.short_label }} → {{ o.destination.short_label }}</div>
+      <div class="text-muted small">{{ o.goods_type|truncatechars:24 }}</div>
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const stars = document.querySelectorAll('#rateStars i');
+  const input = document.getElementById('starsInput');
+  function paint(v){ stars.forEach(s => s.className = (+s.dataset.v <= v ? 'bi bi-star-fill text-warning' : 'bi bi-star text-warning')); }
+  if(stars.length){ paint(5); stars.forEach(s => s.addEventListener('click', () => { input.value = s.dataset.v; paint(+s.dataset.v); })); }
+</script>
+{% endblock %}

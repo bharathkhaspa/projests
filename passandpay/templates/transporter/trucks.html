@@ -1,0 +1,56 @@
+{% extends "app_base.html" %}
+{% load content_tags %}
+{% block title %}My Trucks — {{ site.brand_name }}{% endblock %}
+{% block app_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div><h1 class="h3 fw-800 mb-0">My Trucks</h1><p class="text-muted mb-0">{{ trucks|length }} in your fleet</p></div>
+  <button class="btn btn-accent" data-bs-toggle="modal" data-bs-target="#addTruck"><i class="bi bi-plus-lg"></i> Add truck</button>
+</div>
+
+<div class="row g-3">
+  {% for t in trucks %}
+  <div class="col-md-6">
+    <div class="card card-soft h-100">
+      <div class="d-flex gap-3 p-3">
+        {% if t.truck_type.display_image %}<img src="{{ t.truck_type.display_image }}" style="width:90px;height:70px;object-fit:cover;border-radius:10px">{% endif %}
+        <div class="flex-grow-1">
+          <div class="d-flex justify-content-between"><div class="fw-800">{{ t.registration_no }}</div><span class="badge-status s-{{ t.status }}">{{ t.get_status_display }}</span></div>
+          <div class="text-muted small">{{ t.model_name|default:"—" }} · {{ t.truck_type.name }}</div>
+          <div class="text-muted small">{{ t.capacity_tons }} ton · {{ t.city|default:"—" }}</div>
+          <span class="badge-status s-{{ t.kyc_status }} mt-1">{{ t.get_kyc_status_display }}</span>
+        </div>
+      </div>
+      <div class="border-top p-2 px-3 d-flex justify-content-between align-items-center small text-muted">
+        <span>{{ t.documents.count|default:0 }} document(s)</span>
+        <span>Added {{ t.created_at|date:"j M Y" }}</span>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12"><div class="card card-soft p-5 text-center"><div class="stat-icon bg-mist text-brand mx-auto mb-3"><i class="bi bi-truck fs-4"></i></div><h6 class="fw-bold">No trucks yet</h6><p class="text-muted small">Add your first truck to start accepting loads.</p><div><button class="btn btn-accent btn-sm" data-bs-toggle="modal" data-bs-target="#addTruck">Add truck</button></div></div></div>
+  {% endfor %}
+</div>
+
+<div class="alert alert-info small mt-3"><i class="bi bi-info-circle"></i> Trucks are verified by our operations team after you add them. Demo trucks are pre-verified so you can accept loads immediately.</div>
+
+<!-- Add truck modal -->
+<div class="modal fade" id="addTruck" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <form method="post" class="modal-content">
+      {% csrf_token %}
+      <div class="modal-header"><h5 class="modal-title">Add a truck</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="mb-3"><label class="form-label small fw-600">Truck type</label>
+          <select name="truck_type_id" class="form-select" required>{% for t in truck_types %}<option value="{{ t.id }}">{{ t.name }} · {{ t.capacity_label }}</option>{% endfor %}</select>
+        </div>
+        <div class="row g-3">
+          <div class="col-sm-6"><label class="form-label small fw-600">Registration no.</label><input name="registration_no" class="form-control text-uppercase" placeholder="DL 01 AB 1234" required></div>
+          <div class="col-sm-6"><label class="form-label small fw-600">Model</label><input name="model_name" class="form-control" placeholder="e.g. Eicher Pro 2049"></div>
+        </div>
+        <div class="mt-3"><label class="form-label small fw-600">Base city</label><input name="city" class="form-control" value="{{ user.city }}" placeholder="City"></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-accent"><i class="bi bi-plus-lg"></i> Add truck</button></div>
+    </form>
+  </div>
+</div>
+{% endblock %}

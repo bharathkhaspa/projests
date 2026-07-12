@@ -1,0 +1,80 @@
+{% extends "app_base.html" %}
+{% load content_tags %}
+{% block title %}Available Loads — {{ site.brand_name }}{% endblock %}
+{% block app_content %}
+<h1 class="h3 fw-800">Available Loads</h1>
+<p class="text-muted">Find loads matching your route and trucks.</p>
+
+<form method="get" class="card card-soft p-3 mb-4">
+  <div class="row g-2 align-items-end">
+    <div class="col-sm-5"><label class="form-label small fw-600">Pickup city</label><input name="origin" value="{{ origin_q }}" class="form-control" placeholder="Any city"></div>
+    <div class="col-sm-5"><label class="form-label small fw-600">Truck type</label>
+      <select name="truck_type" class="form-select"><option value="">Any type</option>
+        {% for t in truck_types %}<option value="{{ t.id }}" {% if type_q == t.id|stringformat:'s' %}selected{% endif %}>{{ t.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-sm-2 d-grid"><button class="btn btn-brand">Filter</button></div>
+  </div>
+</form>
+
+<div class="row g-3">
+  {% for b in loads %}
+  <div class="col-md-6">
+    <div class="card card-soft p-3 h-100">
+      <div class="d-flex justify-content-between"><span class="small font-monospace text-muted">#{{ b.reference }}</span>{% if b.mode == 'shared' %}<span class="badge bg-warning-subtle text-warning-emphasis"><i class="bi bi-diagram-3"></i> Part load</span>{% endif %}</div>
+      <div class="fw-700 mt-1"><i class="bi bi-geo-alt text-brand"></i> {{ b.origin.short_label }} <span class="text-muted">→</span> {{ b.destination.short_label }}</div>
+      <div class="text-muted small">{{ b.distance_km }} km</div>
+      <div class="d-flex flex-wrap gap-2 bg-mist rounded-3 p-2 mt-2 small text-muted">
+        <span><i class="bi bi-box"></i> {{ b.goods_type|truncatechars:20 }}</span>
+        <span><i class="bi bi-speedometer2"></i> {{ b.weight_tons }}t</span>
+        <span><i class="bi bi-calendar3"></i> {{ b.pickup_date }}</span>
+        <span><i class="bi bi-truck"></i> {{ b.truck_type.name|truncatewords:2 }}</span>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <div><div class="fs-5 fw-800 text-success">{{ b.fare_total|inr }}</div><div class="text-muted small">{{ b.shipper.display_name }}</div></div>
+        <button class="btn btn-accent btn-sm" data-bs-toggle="modal" data-bs-target="#acceptModal"
+                data-url="{% url 'transporter:accept' b.pk %}" data-route="{{ b.origin.short_label }} → {{ b.destination.short_label }}"
+                data-weight="{{ b.weight_tons }}"><i class="bi bi-check2"></i> Accept</button>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12"><div class="card card-soft p-5 text-center"><div class="stat-icon bg-mist text-brand mx-auto mb-3"><i class="bi bi-box-seam fs-4"></i></div><h6 class="fw-bold">No open loads</h6><p class="text-muted small mb-0">No loads match your filters right now. New loads appear all the time.</p></div></div>
+  {% endfor %}
+</div>
+
+<!-- Accept modal -->
+<div class="modal fade" id="acceptModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <form method="post" id="acceptForm" class="modal-content">
+      {% csrf_token %}
+      <div class="modal-header"><h5 class="modal-title">Accept load</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="bg-mist rounded-3 p-3 mb-3"><div class="fw-600" id="amRoute">—</div><div class="small text-muted">Load weight: <span id="amWeight"></span> ton</div></div>
+        <label class="form-label small fw-600">Assign a verified truck</label>
+        <select name="truck_id" class="form-select" required>
+          {% for t in my_trucks %}
+            <option value="{{ t.id }}" data-cap="{{ t.capacity_tons }}" {% if t.status != 'available' or t.kyc_status != 'verified' %}disabled{% endif %}>
+              {{ t.registration_no }} · {{ t.truck_type.name }} ({{ t.capacity_tons }}t){% if t.kyc_status != 'verified' %} — not verified{% elif t.status != 'available' %} — {{ t.get_status_display }}{% endif %}
+            </option>
+          {% empty %}<option disabled>No trucks — add one first</option>{% endfor %}
+        </select>
+        <p class="small text-muted mt-2 mb-0">Only available, verified trucks with enough capacity can be assigned.</p>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-accent"><i class="bi bi-check2"></i> Confirm trip</button></div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const am = document.getElementById('acceptModal');
+  am.addEventListener('show.bs.modal', e => {
+    const b = e.relatedTarget;
+    document.getElementById('acceptForm').action = b.dataset.url;
+    document.getElementById('amRoute').textContent = b.dataset.route;
+    document.getElementById('amWeight').textContent = b.dataset.weight;
+  });
+</script>
+{% endblock %}

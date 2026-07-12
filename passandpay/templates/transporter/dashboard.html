@@ -1,0 +1,51 @@
+{% extends "app_base.html" %}
+{% load content_tags %}
+{% block title %}Dashboard — {{ site.brand_name }}{% endblock %}
+{% block app_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <div><h1 class="h3 fw-800 mb-0">Welcome, {{ user.display_name|truncatewords:1 }} 🚛</h1><p class="text-muted mb-0">Your fleet at a glance.</p></div>
+  <a href="{% url 'transporter:loads' %}" class="btn btn-accent"><i class="bi bi-box-seam"></i> Find loads</a>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="stat-card d-flex justify-content-between"><div><div class="text-muted small">Total earnings</div><div class="fs-4 fw-800 text-success">{{ earnings|inr }}</div></div><span class="stat-icon bg-mist text-success"><i class="bi bi-wallet2"></i></span></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card d-flex justify-content-between"><div><div class="text-muted small">Active trips</div><div class="fs-3 fw-800">{{ active_count }}</div></div><span class="stat-icon bg-mist text-brand"><i class="bi bi-signpost-split"></i></span></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card d-flex justify-content-between"><div><div class="text-muted small">My trucks</div><div class="fs-3 fw-800">{{ trucks|length }}</div></div><span class="stat-icon bg-mist text-brand"><i class="bi bi-truck"></i></span></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card d-flex justify-content-between"><div><div class="text-muted small">Open loads</div><div class="fs-3 fw-800">{{ open_loads }}</div></div><span class="stat-icon bg-mist text-accent"><i class="bi bi-box-seam"></i></span></div></div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="d-flex justify-content-between align-items-center mb-3"><h6 class="fw-bold mb-0">Active trips</h6><a href="{% url 'transporter:trips' %}" class="small fw-600 text-brand">Manage</a></div>
+    <div class="row g-3">
+      {% for b in active %}
+      <div class="col-md-6">{% include 'partials/booking_card.html' with b=b perspective='transporter' %}</div>
+      {% empty %}
+      <div class="col-12"><div class="card card-soft p-5 text-center">
+        <div class="stat-icon bg-mist text-brand mx-auto mb-3"><i class="bi bi-signpost-split fs-4"></i></div>
+        <h6 class="fw-bold">No active trips</h6><p class="text-muted small">Accept a load to start earning.</p>
+        <div><a href="{% url 'transporter:loads' %}" class="btn btn-accent btn-sm">Browse loads</a></div>
+      </div></div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card card-soft p-4 mb-3">
+      <h6 class="fw-bold mb-3">My fleet</h6>
+      {% for t in trucks %}
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="d-flex align-items-center gap-2"><span class="stat-icon bg-mist text-brand" style="width:36px;height:36px"><i class="bi bi-truck"></i></span><div><div class="fw-600 small">{{ t.registration_no }}</div><div class="text-muted small">{{ t.model_name|default:t.truck_type.name }}</div></div></div>
+        <span class="badge-status s-{{ t.status }}">{{ t.get_status_display }}</span>
+      </div>
+      {% empty %}<p class="text-muted small mb-0">No trucks added yet.</p>{% endfor %}
+      <a href="{% url 'transporter:trucks' %}" class="small fw-600 text-accent mt-2 d-inline-block">Manage trucks →</a>
+    </div>
+    <div class="card card-soft p-4">
+      <h6 class="fw-bold mb-3">Performance</h6>
+      <div class="d-flex justify-content-between small mb-2"><span class="text-muted"><i class="bi bi-star-fill text-warning"></i> Rating</span><span class="fw-600">{{ user.rating|default:"—" }} / 5</span></div>
+      <div class="d-flex justify-content-between small"><span class="text-muted"><i class="bi bi-graph-up text-success"></i> Completed trips</span><span class="fw-600">{{ delivered_count }}</span></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

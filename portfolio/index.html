@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bharath K — Full-Stack Developer & ML Engineer</title>
+  <meta name="description" content="Freelance full-stack developer and ML engineer building web apps, e-commerce platforms, mobile-ready products, and machine-learning solutions with Django, React, TypeScript, and Python." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="#top" class="nav-logo">bharath<span>.dev</span></a>
+    <div class="nav-links">
+      <a href="#projects">Projects</a>
+      <a href="#services">Services</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact" class="nav-cta">Hire Me</a>
+    </div>
+  </nav>
+
+  <!-- ============ HERO ============ -->
+  <header class="hero" id="top">
+    <p class="hero-kicker">Freelance Full-Stack Developer · ML Engineer</p>
+    <h1>I build web, mobile &amp; ML products<br /><span class="grad">that ship and scale.</span></h1>
+    <p class="hero-sub">
+      From booking platforms to 3D e-commerce experiences to machine-learning solutions —
+      I design, build, and deploy complete products with <strong>Django</strong>,
+      <strong>React</strong>, <strong>TypeScript</strong>, and <strong>Python</strong>.
+    </p>
+    <div class="hero-actions">
+      <a href="#projects" class="btn btn-primary">See my work</a>
+      <a href="#contact" class="btn btn-ghost">Get in touch</a>
+    </div>
+    <div class="hero-stats">
+      <div><strong>Full-stack</strong><span>Backend to pixel</span></div>
+      <div><strong>ML Engineer</strong><span>Data → working models</span></div>
+      <div><strong>End-to-end</strong><span>Idea → deployed product</span></div>
+      <div><strong>India-based</strong><span>Working worldwide</span></div>
+    </div>
+  </header>
+
+  <!-- ============ PROJECTS ============ -->
+  <section id="projects" class="section">
+    <p class="section-kicker">Selected Work</p>
+    <h2>Projects</h2>
+
+    <article class="project reveal">
+      <div class="project-visual pv-truck">
+        <div class="pv-badge">Logistics Platform</div>
+        <a class="pv-main" href="assets/passandpay-home.png" target="_blank">
+          <img src="assets/passandpay-home.png" alt="Pass & Pay — landing page with instant quote widget" />
+        </a>
+        <div class="pv-thumbs">
+          <a href="assets/passandpay-dashboard.png" target="_blank"><img src="assets/passandpay-dashboard.png" alt="Shipper dashboard with live bookings" /></a>
+          <a href="assets/passandpay-booking.png" target="_blank"><img src="assets/passandpay-booking.png" alt="Multi-step truck booking flow with fare estimate" /></a>
+        </div>
+      </div>
+      <div class="project-body">
+        <h3>Pass &amp; Pay — Truck Booking &amp; Goods Transport Platform</h3>
+        <p class="project-desc">
+          A production-quality logistics marketplace connecting shippers with truck owners
+          across India — inspired by the WheelsEye model. Supports full-load and shared
+          part-load bookings with proportional fare splitting, live shipment tracking,
+          payments with GST invoices, and a fully content-managed admin panel.
+        </p>
+        <ul class="project-points">
+          <li><strong>India-wide location search</strong> — type-ahead autocomplete over city/district/PIN data, built to scale to the full ~155k-row India Post dataset.</li>
+          <li><strong>Smart fare engine</strong> — live estimates from base + distance + GST with long-haul surcharges; shared loads split cost by weight.</li>
+          <li><strong>CMS-driven admin</strong> — non-technical staff manage banners, offers, FAQs, KYC, bookings, and payments from a grouped django-unfold dashboard.</li>
+          <li><strong>Role-based accounts</strong> — shipper / transporter / admin flows with live tracking timelines and printable invoices.</li>
+        </ul>
+        <div class="chips">
+          <span>Django 5</span><span>PostgreSQL</span><span>HTMX</span><span>Bootstrap 5</span><span>django-unfold</span><span>Gunicorn</span>
+        </div>
+        <div class="project-links">
+          <a class="link-btn" href="#" data-placeholder="live-demo">Live Demo ↗</a>
+          <a class="link-btn" href="#" data-placeholder="github">Source Code ↗</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="project reveal">
+      <div class="project-visual pv-3d">
+        <div class="pv-badge">3D E-Commerce</div>
+        <a class="pv-main" href="assets/junober-home.png" target="_blank">
+          <img src="assets/junober-home.png" alt="Junober — custom apparel storefront" />
+        </a>
+        <div class="pv-thumbs">
+          <a href="assets/junober-customize.png" target="_blank"><img src="assets/junober-customize.png" alt="Real-time 3D garment customizer" /></a>
+          <a href="assets/junober-shop.png" target="_blank"><img src="assets/junober-shop.png" alt="Product catalog with filters" /></a>
+        </div>
+      </div>
+      <div class="project-body">
+        <h3>Junober — E-Commerce Store with Real-Time 3D Product Customizer</h3>
+        <p class="project-desc">
+          A full-stack custom-products store where shoppers personalize items in an
+          interactive 3D viewer before buying. Complete storefront with cart, checkout,
+          order history, and a bespoke admin panel for products, orders, and marketing banners.
+        </p>
+        <ul class="project-points">
+          <li><strong>Real-time 3D customizer</strong> — built with Three.js and react-three-fiber; customers see their design on the product instantly.</li>
+          <li><strong>Full commerce flow</strong> — catalog, product detail, cart, checkout, dynamic pricing, order tracking, and account management.</li>
+          <li><strong>Custom admin panel</strong> — dashboard, product & order management, and banner control built into the React app itself.</li>
+          <li><strong>Modern API architecture</strong> — Django REST backend (catalog, orders, pricing, production, shipping) consumed via TanStack Query with Zustand state.</li>
+        </ul>
+        <div class="chips">
+          <span>React 19</span><span>TypeScript</span><span>Three.js</span><span>Django REST</span><span>TanStack Query</span><span>Zustand</span><span>Vite</span>
+        </div>
+        <div class="project-links">
+          <a class="link-btn" href="#" data-placeholder="live-demo">Live Demo ↗</a>
+          <a class="link-btn" href="#" data-placeholder="github">Source Code ↗</a>
+        </div>
+      </div>
+    </article>
+
+    <p class="section-kicker" style="margin-top:56px;">AI &amp; Machine Learning</p>
+    <h2 style="margin-bottom:14px;">AI / ML Projects</h2>
+    <p class="ai-intro">Four production-style AI products — from calling LLM APIs the right way
+      (citations, schemas, guardrails, evals) to actually training and shipping my own models.</p>
+
+    <div class="mini-grid">
+      <article class="mini reveal">
+        <a class="mini-shot" href="assets/ai-finetune.png" target="_blank">
+          <img src="assets/ai-finetune.png" alt="FineTune Lab — before/after model comparison UI" />
+        </a>
+        <div class="mini-body">
+          <h3>🧪 FineTune Lab — Custom Model Training</h3>
+          <p>Fine-tuned DistilBERT on 1,300 real support tickets, with a side-by-side UI proving
+            the gain: a generic model scores <b>56%</b> on held-out data — my fine-tuned model
+            scores <b>97%</b>. Runs locally, ~10&nbsp;ms inference, zero API cost.</p>
+          <div class="chips"><span>PyTorch</span><span>Transformers</span><span>DistilBERT</span><span>Gradio</span><span>Held-out evals</span></div>
+        </div>
+      </article>
+
+      <article class="mini reveal">
+        <a class="mini-shot" href="assets/ai-docuchat.png" target="_blank">
+          <img src="assets/ai-docuchat.png" alt="DocuChat — RAG document Q&A workspace" />
+        </a>
+        <div class="mini-body">
+          <h3>📄 DocuChat — RAG with Verifiable Citations</h3>
+          <p>Upload PDFs or URLs and chat with them. Retrieval over a vector store, and every
+            claim in an answer carries a citation back to the exact source passage and page —
+            the model says "I don't know" instead of hallucinating.</p>
+          <div class="chips"><span>FastAPI</span><span>ChromaDB</span><span>Claude API</span><span>Citations</span><span>Vector search</span></div>
+        </div>
+      </article>
+
+      <article class="mini reveal">
+        <a class="mini-shot" href="assets/ai-triage.png" target="_blank">
+          <img src="assets/ai-triage.png" alt="TriageDesk — AI issue triage with evals" />
+        </a>
+        <div class="mini-body">
+          <h3>🎯 TriageDesk — AI Agent with an Evals Harness</h3>
+          <p>Messy bug reports in → schema-validated triage out: type, priority, component,
+            labels, and a drafted reply. Ships with a labeled test set measuring per-field
+            accuracy, real cost per triage, and p95 latency — AI you can trust because it's measured.</p>
+          <div class="chips"><span>Structured outputs</span><span>Pydantic</span><span>FastAPI</span><span>Evals</span><span>Cost tracking</span></div>
+        </div>
+      </article>
+
+      <article class="mini reveal">
+        <a class="mini-shot" href="assets/ai-snapscan.png" target="_blank">
+          <img src="assets/ai-snapscan.png" alt="SnapScan — AI receipt scanner mobile app" />
+        </a>
+        <div class="mini-body">
+          <h3>📸 SnapScan — Vision AI Mobile App</h3>
+          <p>Point your phone at a receipt → an AI vision model extracts merchant, total, tax,
+            and line items as schema-enforced JSON → saved to a spend-tracking history.
+            React Native (Expo) app + Node API that keeps the key off the device.</p>
+          <div class="chips"><span>React Native</span><span>Expo</span><span>Vision AI</span><span>Node.js</span><span>JSON Schema</span></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ SERVICES ============ -->
+  <section id="services" class="section section-alt">
+    <p class="section-kicker">What I Do</p>
+    <h2>Services</h2>
+    <div class="cards">
+      <div class="card reveal">
+        <div class="card-icon">🌐</div>
+        <h3>Web Application Development</h3>
+        <p>Complete web apps — booking systems, marketplaces, dashboards, internal tools — built with Django or React and deployed to production.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">🛒</div>
+        <h3>E-Commerce &amp; Storefronts</h3>
+        <p>Online stores with carts, checkout, payments, order management, and admin panels — including rich experiences like 3D product customization.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">📱</div>
+        <h3>Mobile &amp; Responsive Apps</h3>
+        <p>Mobile-first, fully responsive interfaces that feel native on every device — from bottom-tab navigation to installable PWAs.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">⚙️</div>
+        <h3>APIs &amp; Admin Systems</h3>
+        <p>Clean REST APIs, role-based access, KYC flows, and content-managed admin panels your team can run without a developer.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">🤖</div>
+        <h3>Machine Learning &amp; AI</h3>
+        <p>ML-powered features for real products — predictions, recommendations, and intelligent automation, deployed as APIs your app can call.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SKILLS ============ -->
+  <section id="skills" class="section">
+    <p class="section-kicker">Toolbox</p>
+    <h2>Skills &amp; Technologies</h2>
+    <div class="skills-grid">
+      <div class="skill-group reveal">
+        <h3>Frontend</h3>
+        <div class="chips"><span>React 19</span><span>TypeScript</span><span>Three.js / R3F</span><span>TanStack Query</span><span>Zustand</span><span>Vite</span><span>HTMX</span><span>Bootstrap 5</span></div>
+      </div>
+      <div class="skill-group reveal">
+        <h3>Backend</h3>
+        <div class="chips"><span>Python</span><span>Django 5</span><span>Django REST Framework</span><span>PostgreSQL</span><span>SQLite</span><span>REST API Design</span></div>
+      </div>
+      <div class="skill-group reveal">
+        <h3>Machine Learning</h3>
+        <div class="chips"><span>Python</span><span>Pandas / NumPy</span><span>scikit-learn</span><span>PyTorch</span><span>Model Training &amp; Evaluation</span><span>ML APIs (FastAPI)</span></div>
+      </div>
+      <div class="skill-group reveal">
+        <h3>Product &amp; Delivery</h3>
+        <div class="chips"><span>Responsive / Mobile-first UI</span><span>Payments &amp; Invoicing</span><span>Auth &amp; Role-based Access</span><span>Admin / CMS Panels</span><span>Deployment (Render · Railway · Heroku)</span><span>Playwright Testing</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section id="contact" class="section section-alt contact">
+    <p class="section-kicker">Let's Work Together</p>
+    <h2>Have a project in mind?</h2>
+    <p class="contact-sub">
+      Tell me what you're building — I'll reply with how I'd approach it,
+      a timeline, and a clear quote.
+    </p>
+    <a class="btn btn-primary btn-lg" href="mailto:bharath.k.technical@gmail.com?subject=Project%20Inquiry">bharath.k.technical@gmail.com</a>
+    <p class="contact-phone">
+      <a href="tel:+918019595907">📞 +91 80195 95907</a>
+      <a class="whatsapp-btn" href="https://wa.me/918019595907?text=Hi%20Bharath%2C%20I%20found%20your%20portfolio%20and%20have%20a%20project%20to%20discuss." target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.297-.497.1-.198.05-.371-.025-.52-.074-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp
+      </a>
+    </p>
+    <div class="contact-links">
+      <a href="#" data-placeholder="github">GitHub</a>
+      <a href="#" data-placeholder="linkedin">LinkedIn</a>
+      <a href="#" data-placeholder="upwork">Upwork</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2026 Bharath K · Built by hand, no templates.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+{% extends "app_base.html" %}
+{% load content_tags %}
+{% block title %}Payments & Invoices — {{ site.brand_name }}{% endblock %}
+{% block app_content %}
+<h1 class="h3 fw-800">Payments & Invoices</h1>
+<p class="text-muted">View payment history and download GST invoices.</p>
+
+<div class="row g-3 mb-4">
+  <div class="col-sm-4"><div class="stat-card"><div class="text-muted small">Total paid</div><div class="fs-4 fw-800 text-success">{{ total_paid|inr }}</div></div></div>
+  <div class="col-sm-4"><div class="stat-card"><div class="text-muted small">Amount due</div><div class="fs-4 fw-800 text-danger">{{ total_due|inr }}</div></div></div>
+  <div class="col-sm-4"><div class="stat-card"><div class="text-muted small">Invoices</div><div class="fs-4 fw-800">{{ bookings|length }}</div></div></div>
+</div>
+
+<div class="card card-soft overflow-hidden">
+  <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead class="bg-mist"><tr><th class="px-3">Invoice</th><th>Route</th><th>Date</th><th class="text-end">Amount</th><th>Status</th><th class="text-end px-3">Action</th></tr></thead>
+      <tbody>
+        {% for b in bookings %}
+        <tr>
+          <td class="px-3 small font-monospace text-muted">INV-{{ b.reference }}</td>
+          <td class="fw-600">{{ b.origin.short_label }} → {{ b.destination.short_label }}</td>
+          <td class="text-muted">{{ b.pickup_date }}</td>
+          <td class="text-end fw-600">{{ b.fare_total|inr }}</td>
+          <td><span class="badge-status s-{{ b.payment_status }}">{{ b.get_payment_status_display }}</span></td>
+          <td class="text-end px-3">
+            {% if b.payment_status == 'unpaid' %}
+              <button class="btn btn-accent btn-sm" data-bs-toggle="modal" data-bs-target="#payModal"
+                      data-url="{% url 'payments:pay' b.pk %}" data-amt="{{ b.fare_total|inr }}" data-route="{{ b.origin.short_label }} → {{ b.destination.short_label }}">Pay now</button>
+            {% else %}
+              <a href="{% url 'payments:invoice' b.pk %}" target="_blank" class="btn btn-outline-brand btn-sm"><i class="bi bi-download"></i> Invoice</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="text-center text-muted py-5">No invoices yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Mock checkout modal -->
+<div class="modal fade" id="payModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <form method="post" id="payForm" class="modal-content">
+      {% csrf_token %}
+      <div class="modal-header"><h5 class="modal-title">Secure checkout</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="d-flex justify-content-between bg-mist rounded-3 p-3 mb-3">
+          <div><div class="fw-600" id="pmRoute">—</div><div class="small text-muted">Pass & Pay shipment</div></div>
+          <div class="fs-4 fw-800 text-brand" id="pmAmt">—</div>
+        </div>
+        <div class="row g-2 mb-3">
+          <div class="col-4"><input type="radio" class="btn-check" name="method" id="m_upi" value="upi" checked><label class="btn btn-outline-brand w-100" for="m_upi">UPI</label></div>
+          <div class="col-4"><input type="radio" class="btn-check" name="method" id="m_card" value="card"><label class="btn btn-outline-brand w-100" for="m_card">Card</label></div>
+          <div class="col-4"><input type="radio" class="btn-check" name="method" id="m_nb" value="netbanking"><label class="btn btn-outline-brand w-100" for="m_nb">Net banking</label></div>
+        </div>
+        <input class="form-control" value="yourname@okhdfc" placeholder="UPI ID">
+        <p class="text-center text-muted small mt-3 mb-0"><i class="bi bi-shield-check text-success"></i> Test mode · No real payment is charged{% if RAZORPAY_KEY_ID %} · Razorpay configured{% endif %}</p>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-accent"><i class="bi bi-lock"></i> Pay <span id="pmBtnAmt"></span></button></div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const modal = document.getElementById('payModal');
+  modal.addEventListener('show.bs.modal', e => {
+    const b = e.relatedTarget;
+    document.getElementById('payForm').action = b.dataset.url;
+    document.getElementById('pmRoute').textContent = b.dataset.route;
+    document.getElementById('pmAmt').textContent = b.dataset.amt;
+    document.getElementById('pmBtnAmt').textContent = b.dataset.amt;
+  });
+</script>
+{% endblock %}

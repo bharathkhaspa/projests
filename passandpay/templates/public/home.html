@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+{% load static content_tags %}
+
+{% block content %}
+<!-- HERO with carousel + quote widget -->
+<section class="hero">
+  {% if banners %}
+    <div id="heroCarousel" class="carousel slide carousel-fade position-absolute w-100 h-100" data-bs-ride="carousel">
+      <div class="carousel-inner h-100">
+        {% for b in banners %}
+        <div class="carousel-item h-100 {% if forloop.first %}active{% endif %}">
+          {% if b.display_image %}<img src="{{ b.display_image }}" class="hero-bg" alt="{{ b.heading }}">{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    <img class="hero-bg" src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1920&q=70" alt="Cargo truck on an Indian highway">
+  {% endif %}
+  <div class="hero-overlay"></div>
+
+  <div class="container hero-content py-5">
+    <div class="row align-items-center g-5 py-lg-4">
+      <div class="col-lg-6">
+        {% with slide=banners.first %}
+        <span class="badge bg-white bg-opacity-10 border border-light border-opacity-25 mb-3 px-3 py-2">
+          <i class="bi bi-patch-check-fill text-accent"></i> India's trusted truck booking platform
+        </span>
+        <h1 class="display-4 fw-800 lh-1 mb-3">{% if slide %}{{ slide.heading }}{% else %}{{ site.hero_title }}{% endif %}</h1>
+        <p class="fs-5 text-white-50 mb-4" style="max-width:480px">{% if slide and slide.subheading %}{{ slide.subheading }}{% else %}{{ site.hero_subtitle }}{% endif %}</p>
+        <div class="d-flex flex-wrap gap-2">
+          <a href="{% url 'accounts:signup' %}" class="btn btn-accent btn-lg px-4">Book a Truck <i class="bi bi-arrow-right"></i></a>
+          <a href="{% url 'public:how_it_works' %}" class="btn btn-lg btn-outline-light px-4">How it works</a>
+        </div>
+        <div class="d-flex gap-4 mt-4 text-white-50 small">
+          <span><i class="bi bi-star-fill text-warning"></i> 4.8 rating</span>
+          <span><i class="bi bi-clock text-accent"></i> 2-min booking</span>
+          <span><i class="bi bi-telephone text-accent"></i> 24×7 support</span>
+        </div>
+        {% endwith %}
+      </div>
+
+      <!-- Quote widget -->
+      <div class="col-lg-6">
+        <div class="bg-white rounded-3xl p-4 card-soft text-dark">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">Get an instant quote</h5>
+            <span class="badge bg-success-subtle text-success">No hidden charges</span>
+          </div>
+          <form id="quoteForm" class="row g-2">
+            <div class="col-sm-6 ac-wrap">
+              <label class="form-label small fw-600"><i class="bi bi-geo-alt text-brand"></i> Pickup</label>
+              <input type="text" class="form-control" placeholder="Search city / PIN"
+                     data-location-input data-target="q_origin_id" data-lat-target="q_olat" data-lng-target="q_olng" autocomplete="off">
+              <div class="ac-results"></div>
+              <input type="hidden" id="q_origin_id"><input type="hidden" id="q_olat"><input type="hidden" id="q_olng">
+            </div>
+            <div class="col-sm-6 ac-wrap">
+              <label class="form-label small fw-600"><i class="bi bi-flag text-accent"></i> Drop</label>
+              <input type="text" class="form-control" placeholder="Search city / PIN"
+                     data-location-input data-target="q_dest_id" data-lat-target="q_dlat" data-lng-target="q_dlng" autocomplete="off">
+              <div class="ac-results"></div>
+              <input type="hidden" id="q_dest_id"><input type="hidden" id="q_dlat"><input type="hidden" id="q_dlng">
+            </div>
+            <div class="col-sm-7">
+              <label class="form-label small fw-600">Truck type</label>
+              <select class="form-select" id="q_truck">
+                {% for t in truck_types %}
+                <option value="{{ t.id }}" data-base="{{ t.base_fare }}" data-perkm="{{ t.per_km_rate }}">{{ t.name }} · {{ t.capacity_label }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-sm-5">
+              <label class="form-label small fw-600">Pickup date</label>
+              <input type="date" class="form-control" id="q_date">
+            </div>
+          </form>
+          <div class="d-flex justify-content-between align-items-center bg-mist rounded-3 p-3 mt-3">
+            <div>
+              <div class="small text-muted">Estimated fare</div>
+              <div class="fs-4 fw-800 text-brand" id="q_estimate">—</div>
+              <div class="small text-muted" id="q_distance"></div>
+            </div>
+            <a href="{% url 'accounts:signup' %}" class="btn btn-accent" id="q_cta">Book this truck <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="bg-white border-bottom">
+  <div class="container py-4">
+    <div class="row text-center g-3">
+      {% for s in "0123"|make_list %}{% endfor %}
+      <div class="col-6 col-lg-3"><div class="fs-2 fw-800 text-brand">50,000+</div><div class="text-muted small">Trucks on network</div></div>
+      <div class="col-6 col-lg-3"><div class="fs-2 fw-800 text-brand">1,200+</div><div class="text-muted small">Routes covered</div></div>
+      <div class="col-6 col-lg-3"><div class="fs-2 fw-800 text-brand">4.8/5</div><div class="text-muted small">Customer rating</div></div>
+      <div class="col-6 col-lg-3"><div class="fs-2 fw-800 text-brand">₹0</div><div class="text-muted small">Booking fee</div></div>
+    </div>
+  </div>
+</section>
+
+{% ads_for 'home_top' as top_ads %}
+{% if top_ads %}
+<section class="container pt-4">
+  {% for ad in top_ads %}
+    <a href="{{ ad.link_url|default:'#' }}" class="d-block">
+      <img src="{{ ad.display_image }}" alt="{{ ad.title }}" class="img-fluid rounded-3 w-100" style="max-height:160px;object-fit:cover">
+    </a>
+  {% endfor %}
+</section>
+{% endif %}
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="eyebrow">How it works</div>
+      <h2 class="fw-800">Move goods in three simple steps</h2>
+    </div>
+    <div class="row g-4">
+      {% for step in "123"|make_list %}{% endfor %}
+      <div class="col-md-4"><div class="card card-soft p-4 h-100">
+        <div class="stat-icon bg-mist text-brand mb-3"><i class="bi bi-box-seam fs-4"></i></div>
+        <h5 class="fw-bold">1 · Post your load</h5>
+        <p class="text-muted mb-0">Search any pickup & drop across India, enter goods and weight, and get an instant transparent fare.</p>
+      </div></div>
+      <div class="col-md-4"><div class="card card-soft p-4 h-100">
+        <div class="stat-icon bg-mist text-brand mb-3"><i class="bi bi-truck fs-4"></i></div>
+        <h5 class="fw-bold">2 · Get matched</h5>
+        <p class="text-muted mb-0">Verified transporters accept your booking — book a full truck or share a part-load on the same route.</p>
+      </div></div>
+      <div class="col-md-4"><div class="card card-soft p-4 h-100">
+        <div class="stat-icon bg-mist text-brand mb-3"><i class="bi bi-geo-alt fs-4"></i></div>
+        <h5 class="fw-bold">3 · Track & pay</h5>
+        <p class="text-muted mb-0">Follow your shipment live, get delivery updates, and pay securely on completion.</p>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUCK TYPES -->
+<section class="section bg-white">
+  <div class="container">
+    <div class="text-center mb-5"><div class="eyebrow">Our fleet</div><h2 class="fw-800">A truck for every load</h2></div>
+    <div class="row g-4">
+      {% for t in truck_types %}
+      <div class="col-sm-6 col-lg-4">
+        <div class="card card-soft h-100 overflow-hidden">
+          {% if t.display_image %}<img src="{{ t.display_image }}" alt="{{ t.name }}" style="height:170px;object-fit:cover">{% endif %}
+          <div class="p-3">
+            <div class="d-flex justify-content-between">
+              <h6 class="fw-bold mb-1">{{ t.name }}</h6>
+              <span class="badge bg-mist text-brand align-self-start">{{ t.capacity_label }}</span>
+            </div>
+            <p class="text-muted small mb-2">{{ t.example_use }}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="fw-600 text-brand">From {{ t.per_km_rate|inr }}/km</span>
+              <a href="{% url 'accounts:signup' %}" class="small fw-600 text-accent">Book now →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- OFFERS -->
+{% if offers %}
+<section class="section">
+  <div class="container">
+    <div class="text-center mb-5"><div class="eyebrow">Offers & promotions</div><h2 class="fw-800">Save more with Pass &amp; Pay</h2></div>
+    <div class="row g-4">
+      {% for o in offers %}
+      <div class="col-md-6 col-lg-4">
+        <a href="{{ o.link_url|default:'#' }}" class="card card-soft h-100 overflow-hidden text-decoration-none text-dark">
+          {% if o.display_image %}<img src="{{ o.display_image }}" alt="{{ o.title }}" style="height:160px;object-fit:cover">{% endif %}
+          <div class="p-3">
+            {% if o.offer_text %}<span class="badge bg-accent mb-2">{{ o.offer_text }}</span>{% endif %}
+            <h6 class="fw-bold mb-1">{{ o.title }}</h6>
+            <p class="text-muted small mb-0">{{ o.description }}</p>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- TESTIMONIALS -->
+{% if testimonials %}
+<section class="section bg-white">
+  <div class="container">
+    <div class="text-center mb-5"><div class="eyebrow">Loved across India</div><h2 class="fw-800">What our users say</h2></div>
+    <div class="row g-4">
+      {% for t in testimonials %}
+      <div class="col-md-4">
+        <div class="card card-soft p-4 h-100">
+          <div class="text-warning mb-2">{{ t.rating|stars }}</div>
+          <p class="text-muted">"{{ t.quote }}"</p>
+          <div class="d-flex align-items-center gap-2 mt-auto">
+            <span class="avatar" style="background:#1A3D7C">{{ t.name|slice:":1" }}</span>
+            <div><div class="fw-600 small">{{ t.name }}</div><div class="text-muted small">{{ t.role }}</div></div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- CTA -->
+<section class="section">
+  <div class="container">
+    <div class="rounded-3xl bg-brand text-white text-center p-5">
+      <h2 class="fw-800">Ready to move your goods?</h2>
+      <p class="text-white-50 mb-4">Join thousands of shippers and transporters moving freight smarter. Sign up free — no booking fees.</p>
+      <a href="{% url 'accounts:signup' %}" class="btn btn-accent btn-lg px-4">Get started free <i class="bi bi-arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/locationpicker.js' %}"></script>
+<script>
+  // Client-side instant quote (no auth needed): haversine × 1.25 detour factor.
+  const f = document.getElementById('quoteForm');
+  const estEl = document.getElementById('q_estimate');
+  const distEl = document.getElementById('q_distance');
+  const cta = document.getElementById('q_cta');
+  const dateEl = document.getElementById('q_date');
+  dateEl.value = new Date().toISOString().slice(0,10);
+  dateEl.min = dateEl.value;
+
+  function val(id){ const e=document.getElementById(id); return e? parseFloat(e.value): NaN; }
+  function haversine(la1,lo1,la2,lo2){
+    const R=6371,r=Math.PI/180;
+    const dla=(la2-la1)*r, dlo=(lo2-lo1)*r;
+    const a=Math.sin(dla/2)**2+Math.cos(la1*r)*Math.cos(la2*r)*Math.sin(dlo/2)**2;
+    return 2*R*Math.asin(Math.sqrt(a));
+  }
+  function recompute(){
+    const olat=val('q_olat'),olng=val('q_olng'),dlat=val('q_dlat'),dlng=val('q_dlng');
+    if([olat,olng,dlat,dlng].some(isNaN)){ estEl.textContent='—'; distEl.textContent=''; return; }
+    const km=Math.max(1,Math.round(haversine(olat,olng,dlat,dlng)*1.25));
+    const opt=document.getElementById('q_truck').selectedOptions[0];
+    const base=+opt.dataset.base, perkm=+opt.dataset.perkm;
+    let pre=base+km*perkm; if(km>800) pre*=1.08;
+    const total=Math.round(pre*1.05);
+    estEl.textContent='₹'+total.toLocaleString('en-IN');
+    distEl.textContent=km+' km';
+  }
+  f.addEventListener('location:selected', recompute);
+  document.getElementById('q_truck').addEventListener('change', recompute);
+</script>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}How it works — {{ site.brand_name }}{% endblock %}
+{% block content %}
+<section class="bg-brand-900 text-white text-center py-5">
+  <div class="container py-4">
+    <h1 class="fw-800">How Pass &amp; Pay works</h1>
+    <p class="text-white-50 mx-auto" style="max-width:540px">Booking a truck should be as easy as booking a cab. Here's the whole journey — for shippers and transporters.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="text-center mb-5"><div class="eyebrow">For shippers</div><h2 class="fw-800">From load to delivery</h2></div>
+    <div class="row g-4">
+      {% for s in steps %}{% endfor %}
+      <div class="col-md-6 col-lg-4"><div class="card card-soft p-4 h-100"><span class="step-num bg-brand text-white mb-3">1</span><h6 class="fw-bold">Post your load</h6><p class="text-muted small mb-0">Search any pickup & drop across India (city or PIN code), add goods type, weight and truck. Get an instant fare estimate.</p></div></div>
+      <div class="col-md-6 col-lg-4"><div class="card card-soft p-4 h-100"><span class="step-num bg-brand text-white mb-3">2</span><h6 class="fw-bold">Choose full or shared</h6><p class="text-muted small mb-0">Book the whole truck, or mark your load shareable to split costs with others on the same route.</p></div></div>
+      <div class="col-md-6 col-lg-4"><div class="card card-soft p-4 h-100"><span class="step-num bg-brand text-white mb-3">3</span><h6 class="fw-bold">Transporter accepts</h6><p class="text-muted small mb-0">A verified, nearby transporter accepts your booking. You both get each other's contact details.</p></div></div>
+      <div class="col-md-6 col-lg-4"><div class="card card-soft p-4 h-100"><span class="step-num bg-brand text-white mb-3">4</span><h6 class="fw-bold">Track live</h6><p class="text-muted small mb-0">Watch the truck move in real time through every status: picked up → in transit → delivered.</p></div></div>
+      <div class="col-md-6 col-lg-4"><div class="card card-soft p-4 h-100"><span class="step-num bg-brand text-white mb-3">5</span><h6 class="fw-bold">Pay on delivery</h6><p class="text-muted small mb-0">Pay securely online once your goods arrive. Download a GST invoice instantly.</p></div></div>
+      <div class="col-md-6 col-lg-4"><div class="card card-soft p-4 h-100"><span class="step-num bg-brand text-white mb-3">6</span><h6 class="fw-bold">Rate the trip</h6><p class="text-muted small mb-0">Rate your transporter. Great ratings keep our network reliable for everyone.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-white">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-6">
+        <div class="eyebrow">Truck sharing</div>
+        <h2 class="fw-800">Part-load? Share the truck, split the cost.</h2>
+        <p class="text-muted">If your goods don't fill a whole truck, mark the load as <strong>shareable</strong>. We group it with other shipments going the same way on the same day until the truck is full — and each shipper pays only for the space they use.</p>
+        <ul class="list-unstyled">
+          <li class="d-flex gap-3 mb-3"><span class="stat-icon bg-mist text-brand"><i class="bi bi-pie-chart"></i></span><div><div class="fw-600">Proportional pricing</div><div class="text-muted small">Fare split by the weight each shipper occupies.</div></div></li>
+          <li class="d-flex gap-3 mb-3"><span class="stat-icon bg-mist text-brand"><i class="bi bi-people"></i></span><div><div class="fw-600">Same-route matching</div><div class="text-muted small">We match loads with the same origin → destination and date window.</div></div></li>
+          <li class="d-flex gap-3"><span class="stat-icon bg-mist text-brand"><i class="bi bi-truck"></i></span><div><div class="fw-600">One truck, many loads</div><div class="text-muted small">Capacity filled efficiently, cutting cost and empty miles.</div></div></li>
+        </ul>
+        <a href="{% url 'accounts:signup' %}" class="btn btn-accent mt-2">Try part-load booking <i class="bi bi-arrow-right"></i></a>
+      </div>
+      <div class="col-lg-6">
+        <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=900&q=70" alt="Container truck loading" class="img-fluid rounded-3xl card-soft">
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

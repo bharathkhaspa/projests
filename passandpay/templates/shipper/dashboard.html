@@ -1,0 +1,61 @@
+{% extends "app_base.html" %}
+{% load content_tags booking_tags %}
+{% block title %}Dashboard — {{ site.brand_name }}{% endblock %}
+{% block app_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <div><h1 class="h3 fw-800 mb-0">Hi, {{ user.display_name|truncatewords:1 }} 👋</h1><p class="text-muted mb-0">Here's what's moving today.</p></div>
+  <a href="{% url 'shipper:book' %}" class="btn btn-accent"><i class="bi bi-plus-square"></i> Book a Truck</a>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="stat-card d-flex justify-content-between"><div><div class="text-muted small">Active bookings</div><div class="fs-3 fw-800">{{ active_count }}</div></div><span class="stat-icon bg-mist text-brand"><i class="bi bi-truck"></i></span></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card d-flex justify-content-between"><div><div class="text-muted small">Delivered</div><div class="fs-3 fw-800">{{ delivered_count }}</div></div><span class="stat-icon bg-mist text-success"><i class="bi bi-check2-circle"></i></span></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card d-flex justify-content-between"><div><div class="text-muted small">Total bookings</div><div class="fs-3 fw-800">{{ total_count }}</div></div><span class="stat-icon bg-mist text-brand"><i class="bi bi-list-check"></i></span></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card d-flex justify-content-between"><div><div class="text-muted small">Total spend</div><div class="fs-4 fw-800">{{ spend|inr }}</div></div><span class="stat-icon bg-mist text-brand"><i class="bi bi-wallet2"></i></span></div></div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card card-soft overflow-hidden">
+      <div class="d-flex justify-content-between align-items-center px-3 py-3 border-bottom">
+        <h6 class="fw-bold mb-0">Current shipment</h6>
+        {% if tracking %}<span class="badge-status {% status_class tracking.status %}">{{ tracking.get_status_display }}</span>{% endif %}
+      </div>
+      {% if tracking %}
+        {% route_map tracking.origin.latitude tracking.origin.longitude tracking.destination.latitude tracking.destination.longitude tracking.current_event.latitude tracking.current_event.longitude tracking.origin.short_label tracking.destination.short_label tracking.is_live height=220 %}
+        <div class="d-flex justify-content-between align-items-center p-3">
+          <div><div class="fw-600">{{ tracking.origin.short_label }} → {{ tracking.destination.short_label }}</div><div class="text-muted small">{{ tracking.goods_type }} · {{ tracking.weight_tons }} ton</div></div>
+          <a href="{% url 'shipper:tracking_detail' tracking.pk %}" class="btn btn-outline-brand btn-sm">Track <i class="bi bi-arrow-right"></i></a>
+        </div>
+      {% else %}
+        <div class="text-center p-5">
+          <div class="stat-icon bg-mist text-brand mx-auto mb-3"><i class="bi bi-truck fs-4"></i></div>
+          <h6 class="fw-bold">No active shipment</h6>
+          <p class="text-muted small">Book a truck to see live tracking here.</p>
+          <a href="{% url 'shipper:book' %}" class="btn btn-accent btn-sm">Book a Truck</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <h6 class="fw-bold mb-3">Quick actions</h6>
+    <a href="{% url 'shipper:book' %}" class="card card-soft p-3 d-flex flex-row align-items-center gap-3 mb-2 text-decoration-none text-dark"><span class="stat-icon bg-mist text-brand"><i class="bi bi-plus-square"></i></span><span class="flex-grow-1"><span class="d-block fw-600 small">Book a new truck</span><span class="d-block text-muted small">Full or shared load</span></span><i class="bi bi-chevron-right text-muted"></i></a>
+    <a href="{% url 'shipper:bookings' %}" class="card card-soft p-3 d-flex flex-row align-items-center gap-3 mb-2 text-decoration-none text-dark"><span class="stat-icon bg-mist text-brand"><i class="bi bi-list-check"></i></span><span class="flex-grow-1"><span class="d-block fw-600 small">My bookings</span><span class="d-block text-muted small">{{ total_count }} total</span></span><i class="bi bi-chevron-right text-muted"></i></a>
+    <a href="{% url 'shipper:tracking' %}" class="card card-soft p-3 d-flex flex-row align-items-center gap-3 mb-2 text-decoration-none text-dark"><span class="stat-icon bg-mist text-brand"><i class="bi bi-geo-alt"></i></span><span class="flex-grow-1"><span class="d-block fw-600 small">Live tracking</span><span class="d-block text-muted small">{{ active_count }} in progress</span></span><i class="bi bi-chevron-right text-muted"></i></a>
+    <a href="{% url 'payments:list' %}" class="card card-soft p-3 d-flex flex-row align-items-center gap-3 text-decoration-none text-dark"><span class="stat-icon bg-mist text-brand"><i class="bi bi-receipt"></i></span><span class="flex-grow-1"><span class="d-block fw-600 small">Payments & invoices</span><span class="d-block text-muted small">View & download</span></span><i class="bi bi-chevron-right text-muted"></i></a>
+  </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+  <h6 class="fw-bold mb-0">Recent bookings</h6>
+  <a href="{% url 'shipper:bookings' %}" class="small fw-600 text-brand">View all</a>
+</div>
+<div class="row g-3">
+  {% for b in bookings %}
+  <div class="col-md-6">{% include 'partials/booking_card.html' with b=b track=1 %}</div>
+  {% empty %}
+  <div class="col-12"><div class="card card-soft p-5 text-center text-muted">No bookings yet. <a href="{% url 'shipper:book' %}" class="fw-600">Book a truck →</a></div></div>
+  {% endfor %}
+</div>
+{% endblock %}

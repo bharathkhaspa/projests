@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" width="200" height="48">
+  <rect x="2" y="9" width="30" height="22" rx="5" fill="#1A3D7C"/>
+  <rect x="7" y="15" width="13" height="10" rx="1.5" fill="#FFFFFF"/>
+  <path d="M20 17h6l5 5v3h-11z" fill="#F5821F"/>
+  <circle cx="13" cy="31" r="3" fill="#1F2933" stroke="#fff" stroke-width="1.5"/>
+  <circle cx="26" cy="31" r="3" fill="#1F2933" stroke="#fff" stroke-width="1.5"/>
+  <text x="42" y="31" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="800">
+    <tspan fill="#1A3D7C">Pass</tspan><tspan fill="#F5821F"> &amp; </tspan><tspan fill="#1A3D7C">Pay</tspan>
+  </text>
+</svg>

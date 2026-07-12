@@ -1,0 +1,60 @@
+{% load content_tags static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ invoice.number }} — Pass & Pay</title>
+  <style>
+    body{font-family:Inter,Arial,sans-serif;color:#1F2933;max-width:720px;margin:32px auto;padding:0 24px}
+    .top{display:flex;justify-content:space-between;border-bottom:3px solid #1A3D7C;padding-bottom:16px}
+    .brand{font-size:24px;font-weight:800;color:#1A3D7C}
+    .brand span{color:#F5821F}
+    .muted{color:#667;font-size:13px}
+    table{width:100%;border-collapse:collapse;margin-top:24px}
+    th,td{text-align:left;padding:10px 8px;font-size:14px;border-bottom:1px solid #eee}
+    th{background:#F4F6F9}
+    .right{text-align:right}
+    .total{font-size:20px;font-weight:800;color:#1A3D7C}
+    .tag{display:inline-block;background:#28A745;color:#fff;padding:3px 10px;border-radius:99px;font-size:12px}
+    .noprint{margin-top:24px}
+    @media print{.noprint{display:none}}
+  </style>
+</head>
+<body>
+  <div class="top">
+    <div>
+      <div class="brand">Pass <span>&amp;</span> Pay</div>
+      <div class="muted">{{ site.tagline }}</div>
+      <div class="muted">{{ site.contact_email }} · GSTIN 29ABCDE1234F1Z5</div>
+    </div>
+    <div class="right">
+      <h2 style="margin:0">TAX INVOICE</h2>
+      <div class="muted">{{ invoice.number }}</div>
+      <div class="muted">Date: {{ invoice.issued_at|date:"j M Y" }}</div>
+      <div style="margin-top:6px"><span class="tag">{{ booking.get_payment_status_display|upper }}</span></div>
+    </div>
+  </div>
+
+  <p style="margin-top:20px"><strong>Billed to:</strong> {{ booking.shipper.display_name }}<br>
+  <span class="muted">Shipment: {{ booking.origin.label }} → {{ booking.destination.label }} ({{ booking.distance_km }} km)</span></p>
+
+  <table>
+    <thead><tr><th>Description</th><th class="right">Amount</th></tr></thead>
+    <tbody>
+      <tr><td>{{ booking.truck_type.name }} — base fare</td><td class="right">{{ booking.fare_base|inr }}</td></tr>
+      <tr><td>Distance · {{ booking.distance_km }} km × {{ booking.per_km_rate|inr }}/km</td><td class="right">{{ booking.fare_distance|inr }}</td></tr>
+      {% if booking.fare_surcharge %}<tr><td>{{ booking.fare_surcharge_label|default:"Surcharge" }}</td><td class="right">{{ booking.fare_surcharge|inr }}</td></tr>{% endif %}
+      <tr><td>GST (5%)</td><td class="right">{{ booking.fare_gst|inr }}</td></tr>
+    </tbody>
+    <tfoot><tr><td class="total">Total</td><td class="right total">{{ booking.fare_total|inr }}</td></tr></tfoot>
+  </table>
+
+  <p class="muted" style="margin-top:32px">This is a computer-generated invoice and does not require a signature.
+  {% if booking.mode == 'shared' %}Part-load (shared truck) — fare reflects your share of the truck.{% else %}Full truck load.{% endif %}</p>
+
+  <div class="noprint">
+    <button onclick="window.print()" style="background:#F5821F;color:#fff;border:0;padding:10px 18px;border-radius:8px;font-weight:600;cursor:pointer">Print / Save as PDF</button>
+    <a href="{% url 'payments:list' %}" style="margin-left:8px">Back to payments</a>
+  </div>
+</body>
+</html>

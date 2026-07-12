@@ -1,0 +1,42 @@
+{% load content_tags booking_tags %}
+<div class="card card-soft h-100">
+  <div class="p-3">
+    <div class="d-flex justify-content-between align-items-start mb-2">
+      <div class="d-flex align-items-center gap-2">
+        <span class="text-muted small font-monospace">#{{ b.reference }}</span>
+        {% if b.mode == 'shared' %}<span class="badge bg-warning-subtle text-warning-emphasis"><i class="bi bi-diagram-3"></i> Shared</span>{% endif %}
+      </div>
+      <span class="badge-status {% status_class b.status %}">{{ b.get_status_display }}</span>
+    </div>
+    <div class="d-flex gap-2">
+      <div class="d-flex flex-column align-items-center pt-1">
+        <span class="rounded-circle bg-brand" style="width:9px;height:9px"></span>
+        <span class="my-1 border-start border-2 border-secondary-subtle" style="height:24px"></span>
+        <span class="rounded-circle bg-accent" style="width:9px;height:9px"></span>
+      </div>
+      <div class="flex-grow-1">
+        <div class="fw-600 small">{{ b.origin.short_label }}</div>
+        <div class="fw-600 small mt-3">{{ b.destination.short_label }}</div>
+      </div>
+      <div class="text-end">
+        <div class="fw-800 text-brand">{{ b.fare_total|inr }}</div>
+        <div class="text-muted small">{{ b.distance_km }} km</div>
+      </div>
+    </div>
+    <div class="d-flex flex-wrap gap-2 bg-mist rounded-3 p-2 mt-3 small text-muted">
+      <span><i class="bi bi-truck"></i> {{ b.truck_type.name|truncatewords:2 }}</span>
+      <span><i class="bi bi-box"></i> {{ b.goods_type|truncatechars:18 }}</span>
+      <span><i class="bi bi-speedometer2"></i> {{ b.weight_tons }}t</span>
+      <span><i class="bi bi-calendar3"></i> {{ b.pickup_date }}</span>
+    </div>
+    {% if perspective == 'transporter' %}
+      <div class="small text-muted mt-2">Shipper: <span class="fw-600 text-dark">{{ b.shipper.display_name }}</span></div>
+    {% elif b.transporter %}
+      <div class="small text-muted mt-2">Transporter: <span class="fw-600 text-dark">{{ b.transporter.display_name }}</span></div>
+    {% endif %}
+    {% if track and b.is_trackable %}
+      <a href="{% url 'shipper:tracking_detail' b.pk %}" class="small fw-600 text-accent mt-2 d-inline-block">Track shipment <i class="bi bi-arrow-right"></i></a>
+    {% endif %}
+  </div>
+  {% if card_footer %}<div class="border-top px-3 py-2 bg-light bg-opacity-50">{{ card_footer }}</div>{% endif %}
+</div>

@@ -1,0 +1,14 @@
+{
+  "name": "snapscan-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.70.0",
+    "dotenv": "^16.4.0",
+    "express": "^4.21.0"
+  }
+}

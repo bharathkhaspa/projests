@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load content_tags %}
+{% block title %}Services — {{ site.brand_name }}{% endblock %}
+{% block content %}
+<section class="bg-brand-900 text-white text-center py-5">
+  <div class="container py-4">
+    <h1 class="fw-800">Our services</h1>
+    <p class="text-white-50 mx-auto" style="max-width:540px">Everything you need to move goods across India — full loads, shared loads, live tracking and transparent pricing.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-6"><div class="card card-soft p-4 h-100">
+        <div class="stat-icon bg-mist text-brand mb-3"><i class="bi bi-truck fs-4"></i></div>
+        <h5 class="fw-bold">Full Truck Load (FTL)</h5>
+        <p class="text-muted">Book an entire truck for your shipment — ideal for bulk goods, time-sensitive cargo and long hauls.</p>
+        <div class="row row-cols-2 g-2 small">
+          <div class="col"><i class="bi bi-check-circle text-success"></i> Dedicated truck</div>
+          <div class="col"><i class="bi bi-check-circle text-success"></i> Point-to-point</div>
+          <div class="col"><i class="bi bi-check-circle text-success"></i> Fastest delivery</div>
+          <div class="col"><i class="bi bi-check-circle text-success"></i> 1 to 20+ tons</div>
+        </div>
+      </div></div>
+      <div class="col-md-6"><div class="card card-soft p-4 h-100">
+        <div class="stat-icon bg-mist text-brand mb-3"><i class="bi bi-diagram-3 fs-4"></i></div>
+        <h5 class="fw-bold">Part Load (Truck Sharing)</h5>
+        <p class="text-muted">Only filling part of a truck? Share it with other shippers on the same route and pay for the space you use.</p>
+        <div class="row row-cols-2 g-2 small">
+          <div class="col"><i class="bi bi-check-circle text-success"></i> Up to 40% cheaper</div>
+          <div class="col"><i class="bi bi-check-circle text-success"></i> Weight-based pricing</div>
+          <div class="col"><i class="bi bi-check-circle text-success"></i> Same-route matching</div>
+          <div class="col"><i class="bi bi-check-circle text-success"></i> Great for small loads</div>
+        </div>
+      </div></div>
+      <div class="col-md-6"><div class="card card-soft p-4 h-100">
+        <div class="stat-icon bg-mist text-brand mb-3"><i class="bi bi-broadcast-pin fs-4"></i></div>
+        <h5 class="fw-bold">GPS Live Tracking</h5>
+        <p class="text-muted">Track every shipment in real time with status updates from pickup to delivery — no more guesswork.</p>
+        <div class="row row-cols-2 g-2 small">
+          <div class="col"><i class="bi bi-check-circle text-success"></i> Live truck location</div>
+          <div class="col"><i class="bi bi-check-circle text-success"></i> Status timeline</div>
+          <div class="col"><i class="bi bi-check-circle text-success"></i> Delivery ETA</div>
+          <div class="col"><i class="bi bi-check-circle text-success"></i> Driver contact</div>
+        </div>
+      </div></div>
+      <div class="col-md-6"><div class="card card-soft p-4 h-100">
+        <div class="stat-icon bg-mist text-brand mb-3"><i class="bi bi-currency-rupee fs-4"></i></div>
+        <h5 class="fw-bold">Transparent Pricing</h5>
+        <p class="text-muted">See a full fare breakdown before you book — base fare, distance cost and GST. No surge, no surprises.</p>
+        <div class="row row-cols-2 g-2 small">
+          <div class="col"><i class="bi bi-check-circle text-success"></i> Upfront estimate</div>
+          <div class="col"><i class="bi bi-check-circle text-success"></i> No booking fee</div>
+          <div class="col"><i class="bi bi-check-circle text-success"></i> GST invoice</div>
+          <div class="col"><i class="bi bi-check-circle text-success"></i> Secure payment</div>
+        </div>
+      </div></div>
+    </div>
+    <div class="text-center mt-5"><a href="{% url 'public:pricing' %}" class="btn btn-brand btn-lg px-4">See pricing <i class="bi bi-arrow-right"></i></a></div>
+  </div>
+</section>
+{% endblock %}

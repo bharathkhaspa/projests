@@ -1,0 +1,31 @@
+{% extends "app_base.html" %}
+{% load content_tags %}
+{% block title %}My Bookings — {{ site.brand_name }}{% endblock %}
+{% block app_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div><h1 class="h3 fw-800 mb-0">My Bookings</h1><p class="text-muted mb-0">{{ bookings|length }} shown</p></div>
+  <a href="{% url 'shipper:book' %}" class="btn btn-accent"><i class="bi bi-plus-square"></i> New booking</a>
+</div>
+
+<div class="d-flex gap-2 overflow-auto pb-2 mb-3">
+  <a href="?status=all" class="btn btn-sm {% if status == 'all' %}btn-brand{% else %}btn-outline-secondary{% endif %} rounded-pill">All</a>
+  {% for value, label in statuses %}
+    <a href="?status={{ value }}" class="btn btn-sm {% if status == value %}btn-brand{% else %}btn-outline-secondary{% endif %} rounded-pill text-nowrap">{{ label }}</a>
+  {% endfor %}
+</div>
+
+<div class="row g-3">
+  {% for b in bookings %}
+  <div class="col-md-6">
+    {% include 'partials/booking_card.html' with b=b track=1 %}
+    {% if b.status == 'pending' %}
+      <form method="post" action="{% url 'shipper:cancel' b.pk %}" class="mt-2">{% csrf_token %}<button class="btn btn-sm btn-link text-danger p-0"><i class="bi bi-x-circle"></i> Cancel booking</button></form>
+    {% elif b.status == 'delivered' and b.payment_status == 'unpaid' %}
+      <a href="{% url 'payments:list' %}" class="btn btn-sm btn-link text-accent p-0 mt-2 fw-600">Pay now →</a>
+    {% endif %}
+  </div>
+  {% empty %}
+  <div class="col-12"><div class="card card-soft p-5 text-center text-muted">No {{ status }} bookings. <a href="{% url 'shipper:book' %}" class="fw-600">Book a truck →</a></div></div>
+  {% endfor %}
+</div>
+{% endblock %}

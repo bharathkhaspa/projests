@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Sign up — {{ site.brand_name }}{% endblock %}
+{% block content %}
+<section class="section bg-mist">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-9 col-lg-7">
+        <div class="card card-soft p-4 p-md-5">
+          <h3 class="fw-800 mb-1">Create your account</h3>
+          <p class="text-muted">Free to join. No booking fees.</p>
+
+          <form method="post" action="{% url 'accounts:signup' %}">
+            {% csrf_token %}
+            {% if form.non_field_errors %}<div class="alert alert-danger py-2 small">{{ form.non_field_errors }}</div>{% endif %}
+
+            <label class="form-label small fw-600 mb-2">I want to…</label>
+            <div class="row g-2 mb-3">
+              {% for value, label in form.role.field.choices %}
+              <div class="col-6">
+                <input type="radio" class="btn-check" name="role" id="role_{{ value }}" value="{{ value }}" {% if forloop.first %}checked{% endif %}>
+                <label class="btn btn-outline-brand w-100 py-3 text-start" for="role_{{ value }}">
+                  <i class="bi {% if value == 'shipper' %}bi-box-seam{% else %}bi-truck{% endif %} fs-4 d-block mb-1"></i>
+                  <span class="fw-600">{% if value == 'shipper' %}Move goods{% else %}Drive / own trucks{% endif %}</span>
+                  <span class="d-block small text-muted">{% if value == 'shipper' %}Book trucks & track shipments{% else %}Find loads & earn more{% endif %}</span>
+                </label>
+              </div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3"><label class="form-label small fw-600">Full name</label>{{ form.full_name }}{% if form.full_name.errors %}<div class="text-danger small">{{ form.full_name.errors.0 }}</div>{% endif %}</div>
+            <div class="row g-3">
+              <div class="col-sm-6 mb-1"><label class="form-label small fw-600">Email</label>{{ form.email }}{% if form.email.errors %}<div class="text-danger small">{{ form.email.errors.0 }}</div>{% endif %}</div>
+              <div class="col-sm-6 mb-1"><label class="form-label small fw-600">Phone</label>{{ form.phone }}</div>
+            </div>
+            <div class="row g-3">
+              <div class="col-sm-6 mb-1"><label class="form-label small fw-600">Company / fleet</label>{{ form.company }}</div>
+              <div class="col-sm-6 mb-1"><label class="form-label small fw-600">Base city</label>{{ form.city }}</div>
+            </div>
+            <div class="mb-3"><label class="form-label small fw-600">Password</label>{{ form.password }}{% if form.password.errors %}<div class="text-danger small">{{ form.password.errors.0 }}</div>{% endif %}</div>
+
+            <button class="btn btn-accent w-100"><i class="bi bi-person-plus"></i> Create account</button>
+          </form>
+
+          <p class="text-center text-muted small mt-4 mb-0">Already have an account? <a href="{% url 'accounts:login' %}" class="fw-600 text-brand">Log in</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

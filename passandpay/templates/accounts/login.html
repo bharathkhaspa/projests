@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Log in — {{ site.brand_name }}{% endblock %}
+{% block content %}
+<section class="section bg-mist">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-7 col-lg-5">
+        <div class="card card-soft p-4 p-md-5">
+          <h3 class="fw-800 mb-1">Welcome back</h3>
+          <p class="text-muted">Log in to manage your bookings and shipments.</p>
+
+          {% if form.errors %}
+            <div class="alert alert-danger py-2 small">Invalid email or password. Try a demo account below.</div>
+          {% endif %}
+
+          <form method="post" action="{% url 'accounts:login' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="form-label small fw-600">Email</label>
+              {{ form.username }}
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-600">Password</label>
+              {{ form.password }}
+            </div>
+            <button class="btn btn-accent w-100"><i class="bi bi-box-arrow-in-right"></i> Log in</button>
+          </form>
+
+          <div class="text-center text-muted small my-3">or try a demo account</div>
+          <div class="row g-2">
+            <div class="col-4"><form method="post" action="{% url 'accounts:login' %}">{% csrf_token %}<input type="hidden" name="username" value="shipper@passandpay.in"><input type="hidden" name="password" value="demo12345"><button class="btn btn-outline-brand w-100 py-2"><i class="bi bi-box-seam d-block fs-5"></i><span class="small">Shipper</span></button></form></div>
+            <div class="col-4"><form method="post" action="{% url 'accounts:login' %}">{% csrf_token %}<input type="hidden" name="username" value="transporter@passandpay.in"><input type="hidden" name="password" value="demo12345"><button class="btn btn-outline-brand w-100 py-2"><i class="bi bi-truck d-block fs-5"></i><span class="small">Transporter</span></button></form></div>
+            <div class="col-4"><form method="post" action="{% url 'accounts:login' %}">{% csrf_token %}<input type="hidden" name="username" value="admin@passandpay.in"><input type="hidden" name="password" value="demo12345"><button class="btn btn-outline-brand w-100 py-2"><i class="bi bi-shield-check d-block fs-5"></i><span class="small">Admin</span></button></form></div>
+          </div>
+
+          <p class="text-center text-muted small mt-4 mb-0">Don't have an account? <a href="{% url 'accounts:signup' %}" class="fw-600 text-brand">Sign up free</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

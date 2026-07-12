@@ -1,0 +1,50 @@
+{% extends 'admin/base.html' %}
+{% load i18n content_tags %}
+
+{% block title %}Dashboard | {{ site_title }}{% endblock %}
+
+{% block branding %}{% include "unfold/helpers/site_branding.html" %}{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:1.5rem">
+  <h1 style="font-size:1.4rem;font-weight:800;margin-bottom:.25rem">Pass &amp; Pay — operations overview</h1>
+  <p style="color:#6b7280;font-size:.85rem">Live platform stats. Use the sidebar to manage content, bookings, fleet and people.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-top:1rem">
+    {% for k in kpi %}
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:1rem 1.1rem">
+      <div style="display:flex;align-items:center;gap:.5rem;color:#6b7280;font-size:.8rem">
+        <span class="material-symbols-outlined" style="font-size:1.1rem;color:#1A3D7C">{{ k.icon }}</span>{{ k.title }}
+      </div>
+      <div style="font-size:1.6rem;font-weight:800;margin-top:.35rem;color:#1F2933">{{ k.value }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1rem;margin-top:1rem">
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:1rem 1.1rem">
+      <div style="font-weight:700;margin-bottom:.6rem">Recent bookings</div>
+      {% for b in recent_bookings %}
+      <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #f1f5f9;font-size:.85rem">
+        <span>#{{ b.reference }} · {{ b.shipper.display_name }}</span>
+        <span style="color:#6b7280">{{ b.origin.short_label }} → {{ b.destination.short_label }}</span>
+      </div>
+      {% empty %}<div style="color:#9ca3af;font-size:.85rem">No bookings yet.</div>{% endfor %}
+    </div>
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:1rem 1.1rem">
+      <div style="font-weight:700;margin-bottom:.6rem">Recent signups</div>
+      {% for u in recent_signups %}
+      <div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #f1f5f9;font-size:.85rem">
+        <span>{{ u.display_name }}</span>
+        <span style="color:#6b7280;text-transform:capitalize">{{ u.role }}{% if not u.is_verified %} · pending{% endif %}</span>
+      </div>
+      {% empty %}<div style="color:#9ca3af;font-size:.85rem">No users yet.</div>{% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="flex flex-col lg:flex-row lg:gap-8">
+  <div class="grow">{% include "unfold/helpers/app_list_default.html" %}</div>
+  {% include "unfold/helpers/history.html" %}
+</div>
+{% endblock %}

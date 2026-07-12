@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Contact — {{ site.brand_name }}{% endblock %}
+{% block content %}
+<section class="bg-brand-900 text-white text-center py-5">
+  <div class="container py-4">
+    <h1 class="fw-800">Get in touch</h1>
+    <p class="text-white-50 mx-auto" style="max-width:520px">Questions about booking, partnerships or pricing? Our team is here 24×7.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-5">
+        <div class="card card-soft p-4 mb-3 d-flex flex-row align-items-center gap-3"><span class="stat-icon bg-mist text-brand"><i class="bi bi-telephone fs-5"></i></span><div><div class="fw-600">Call us</div><a href="tel:{{ site.contact_phone }}" class="text-muted small">{{ site.contact_phone }}</a></div></div>
+        <div class="card card-soft p-4 mb-3 d-flex flex-row align-items-center gap-3"><span class="stat-icon bg-mist text-brand"><i class="bi bi-envelope fs-5"></i></span><div><div class="fw-600">Email</div><a href="mailto:{{ site.contact_email }}" class="text-muted small">{{ site.contact_email }}</a></div></div>
+        <div class="card card-soft p-4 d-flex flex-row align-items-center gap-3"><span class="stat-icon bg-mist text-brand"><i class="bi bi-geo-alt fs-5"></i></span><div><div class="fw-600">Office</div><div class="text-muted small">Bengaluru, India</div></div></div>
+      </div>
+      <div class="col-lg-7">
+        <div class="card card-soft p-4">
+          <h5 class="fw-bold mb-3">Send us a message</h5>
+          <form method="post" action="{% url 'public:contact' %}">
+            {% csrf_token %}
+            <div class="row g-3">
+              <div class="col-sm-6"><label class="form-label small fw-600">Full name</label><input name="name" required class="form-control" placeholder="Your name"></div>
+              <div class="col-sm-6"><label class="form-label small fw-600">Email</label><input name="email" type="email" required class="form-control" placeholder="you@example.com"></div>
+              <div class="col-12"><label class="form-label small fw-600">Subject</label><input name="subject" class="form-control" placeholder="How can we help?"></div>
+              <div class="col-12"><label class="form-label small fw-600">Message</label><textarea name="message" rows="4" required class="form-control" placeholder="Tell us a bit more…"></textarea></div>
+              <div class="col-12"><button class="btn btn-accent"><i class="bi bi-send"></i> Send message</button></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    {% if faqs %}
+    <div class="mt-5">
+      <h4 class="fw-800 mb-3">Frequently asked questions</h4>
+      <div class="accordion" id="faqAcc">
+        {% for f in faqs %}
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ f.id }}">{{ f.question }}</button>
+          </h2>
+          <div id="faq{{ f.id }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" data-bs-parent="#faqAcc">
+            <div class="accordion-body text-muted">{{ f.answer }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

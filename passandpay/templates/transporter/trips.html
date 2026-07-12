@@ -1,0 +1,57 @@
+{% extends "app_base.html" %}
+{% load content_tags booking_tags %}
+{% block title %}Active Trips — {{ site.brand_name }}{% endblock %}
+{% block app_content %}
+<h1 class="h3 fw-800">Active Trips</h1>
+<p class="text-muted">Update trip status as you go.</p>
+
+{% for b, timeline in trips %}
+<div class="card card-soft overflow-hidden mb-4">
+  <div class="row g-0">
+    <div class="col-lg-6">
+      {% route_map b.origin.latitude b.origin.longitude b.destination.latitude b.destination.longitude b.current_event.latitude b.current_event.longitude b.origin.short_label b.destination.short_label b.is_live height=260 %}
+    </div>
+    <div class="col-lg-6 p-4">
+      <div class="d-flex justify-content-between align-items-start">
+        <div><div class="small font-monospace text-muted">#{{ b.reference }}</div><h5 class="fw-bold mb-0">{{ b.origin.short_label }} → {{ b.destination.short_label }}</h5></div>
+        <span class="badge-status {% status_class b.status %}">{{ b.get_status_display }}</span>
+      </div>
+      <div class="d-flex flex-wrap gap-2 bg-mist rounded-3 p-2 mt-2 small text-muted">
+        <span><i class="bi bi-box"></i> {{ b.goods_type|truncatechars:20 }}</span>
+        <span><i class="bi bi-speedometer2"></i> {{ b.weight_tons }}t</span>
+        <span><i class="bi bi-truck"></i> {{ b.truck_type.name|truncatewords:2 }}</span>
+        <span class="fw-700 text-success">{{ b.fare_total|inr }}</span>
+      </div>
+      <div class="d-flex justify-content-between align-items-center border rounded-3 p-2 mt-3">
+        <div><div class="fw-600 small">{{ b.shipper.display_name }}</div><div class="text-muted small">Shipper</div></div>
+        <div class="d-flex gap-1">
+          <a href="tel:{{ b.shipper.phone }}" class="btn btn-outline-brand btn-sm"><i class="bi bi-telephone"></i></a>
+          <a href="https://www.google.com/maps/dir/{{ b.origin.short_label|urlencode }}/{{ b.destination.short_label|urlencode }}" target="_blank" class="btn btn-outline-brand btn-sm"><i class="bi bi-sign-turn-right"></i></a>
+        </div>
+      </div>
+      {% if b.status != 'delivered' %}
+      <form method="post" action="{% url 'transporter:advance' b.pk %}" class="mt-3">
+        {% csrf_token %}
+        <button class="btn btn-brand w-100">
+          {% if b.status == 'confirmed' %}Mark as picked up{% elif b.status == 'picked_up' %}Start transit{% elif b.status == 'in_transit' %}Mark as delivered{% endif %} <i class="bi bi-chevron-right"></i>
+        </button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+  <div class="border-top p-4">
+    <ul class="timeline d-flex flex-wrap gap-4 mb-0" style="flex-direction:row">
+      {% for s in timeline %}
+      <li class="{% if s.reached %}done{% endif %}" style="padding:0 0 0 2.2rem">
+        <span class="dot">{% if s.reached %}<i class="bi bi-check-lg"></i>{% endif %}</span>
+        <div class="fw-600 small {% if not s.reached %}text-muted{% endif %}">{{ s.label }}</div>
+        <div class="text-muted small">{% if s.at %}{{ s.at|date:"j M, g:i A" }}{% else %}—{% endif %}</div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% empty %}
+<div class="card card-soft p-5 text-center"><div class="stat-icon bg-mist text-brand mx-auto mb-3"><i class="bi bi-signpost-split fs-4"></i></div><h6 class="fw-bold">No active trips</h6><p class="text-muted small mb-0">Accept loads to see your live trips here.</p></div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,137 @@
+{% extends "app_base.html" %}
+{% load static content_tags %}
+{% block title %}Book a Truck — {{ site.brand_name }}{% endblock %}
+{% block app_content %}
+<h1 class="h3 fw-800">Book a Truck</h1>
+<p class="text-muted">Post your load and get an instant fare estimate. Pickup & drop cover all of India.</p>
+
+<form method="post" action="{% url 'shipper:book' %}" id="bookForm">
+  {% csrf_token %}
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <!-- Route -->
+      <div class="card card-soft p-4 mb-4">
+        <h6 class="fw-bold mb-3">1 · Where are you shipping?</h6>
+        <div class="row g-3">
+          <div class="col-sm-6 ac-wrap">
+            <label class="form-label small fw-600"><i class="bi bi-geo-alt text-brand"></i> Pickup (city or PIN)</label>
+            <input type="text" class="form-control" placeholder="Search any place in India" required
+                   data-location-input data-target="origin_id" data-lat-target="olat" data-lng-target="olng" autocomplete="off">
+            <div class="ac-results"></div>
+            <input type="hidden" name="origin_id" id="origin_id" required>
+            <input type="hidden" id="olat"><input type="hidden" id="olng">
+          </div>
+          <div class="col-sm-6 ac-wrap">
+            <label class="form-label small fw-600"><i class="bi bi-flag text-accent"></i> Drop (city or PIN)</label>
+            <input type="text" class="form-control" placeholder="Search any place in India" required
+                   data-location-input data-target="dest_id" data-lat-target="dlat" data-lng-target="dlng" autocomplete="off">
+            <div class="ac-results"></div>
+            <input type="hidden" name="destination_id" id="dest_id" required>
+            <input type="hidden" id="dlat"><input type="hidden" id="dlng">
+          </div>
+          <div class="col-sm-6">
+            <label class="form-label small fw-600"><i class="bi bi-calendar3 text-brand"></i> Pickup date</label>
+            <input type="date" name="pickup_date" id="pickup_date" class="form-control" value="{{ today }}" min="{{ today }}">
+          </div>
+        </div>
+      </div>
+
+      <!-- Truck -->
+      <div class="card card-soft p-4 mb-4">
+        <h6 class="fw-bold mb-3">2 · Choose your truck</h6>
+        <div class="row g-2">
+          {% for t in truck_types %}
+          <div class="col-sm-6">
+            <input type="radio" class="btn-check" name="truck_type_id" id="tt{{ t.id }}" value="{{ t.id }}"
+                   data-cap="{{ t.capacity_tons }}" {% if forloop.first %}checked{% endif %} required>
+            <label class="btn btn-outline-brand w-100 text-start d-flex align-items-center gap-2 p-2" for="tt{{ t.id }}">
+              {% if t.display_image %}<img src="{{ t.display_image }}" style="width:54px;height:40px;object-fit:cover;border-radius:6px">{% endif %}
+              <span><span class="d-block fw-600 small">{{ t.name }}</span><span class="d-block small text-muted">{{ t.capacity_label }} · {{ t.per_km_rate|inr }}/km</span></span>
+            </label>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Cargo -->
+      <div class="card card-soft p-4 mb-4">
+        <h6 class="fw-bold mb-3">3 · What are you shipping?</h6>
+        <div class="row g-3">
+          <div class="col-sm-6"><label class="form-label small fw-600">Goods type</label><input name="goods_type" id="goods_type" class="form-control" placeholder="e.g. Furniture, electronics" required></div>
+          <div class="col-sm-6"><label class="form-label small fw-600">Weight (tons)</label><input name="weight_tons" id="weight_tons" type="number" step="0.1" min="0.1" class="form-control" placeholder="e.g. 2.5" required></div>
+        </div>
+        <label class="form-label small fw-600 mt-3">Load type</label>
+        <div class="row g-2">
+          <div class="col-sm-6">
+            <input type="radio" class="btn-check" name="mode" id="mode_full" value="full" checked>
+            <label class="btn btn-outline-brand w-100 text-start p-3" for="mode_full"><i class="bi bi-truck fs-5 d-block mb-1"></i><span class="fw-600">Full Truck Load</span><span class="d-block small text-muted">Book the entire truck.</span></label>
+          </div>
+          <div class="col-sm-6">
+            <input type="radio" class="btn-check" name="mode" id="mode_shared" value="shared">
+            <label class="btn btn-outline-brand w-100 text-start p-3" for="mode_shared"><i class="bi bi-diagram-3 fs-5 d-block mb-1"></i><span class="fw-600">Part Load (Shared)</span><span class="d-block small text-muted">Share the truck & split fare by weight.</span></label>
+          </div>
+        </div>
+        <div class="alert alert-warning small mt-3 mb-0 d-none" id="sharedNote"><i class="bi bi-info-circle"></i> We'll match your part-load with other shipments on the same route & date, and split the fare proportionally by weight.</div>
+      </div>
+    </div>
+
+    <!-- Fare sidebar -->
+    <div class="col-lg-4">
+      <div class="card card-soft p-4 sticky-top" style="top:1rem">
+        <h6 class="fw-bold mb-3">Fare estimate</h6>
+        <div id="fareBox" class="text-muted small">Select pickup, drop, truck & weight to see your fare.</div>
+        <div id="fareBreak" class="d-none">
+          <div class="bg-mist rounded-3 p-3">
+            <div id="shareRow" class="d-none d-flex justify-content-between mb-2 pb-2 border-bottom"><span class="fw-600 text-accent">Your share of truck</span><span class="fw-800 text-accent" id="sharePct">—</span></div>
+            <div class="d-flex justify-content-between small mb-1"><span class="text-muted">Base fare</span><span id="fBase">—</span></div>
+            <div class="d-flex justify-content-between small mb-1"><span class="text-muted" id="fDistLbl">Distance</span><span id="fDist">—</span></div>
+            <div class="d-flex justify-content-between small mb-1 d-none" id="fSurRow"><span class="text-muted" id="fSurLbl">Surcharge</span><span id="fSur">—</span></div>
+            <div class="d-flex justify-content-between small mb-2"><span class="text-muted">GST (5%)</span><span id="fGst">—</span></div>
+            <div class="d-flex justify-content-between border-top pt-2"><span class="fw-600">Total estimate</span><span class="fw-800 fs-5 text-brand" id="fTotal">—</span></div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-accent w-100 mt-3"><i class="bi bi-check2"></i> Confirm booking</button>
+        <p class="text-center text-muted small mt-2 mb-0">No booking fee · Pay on delivery</p>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/locationpicker.js' %}"></script>
+<script>
+  const form = document.getElementById('bookForm');
+  const get = id => document.getElementById(id);
+  function inr(n){ return '₹'+Math.round(n).toLocaleString('en-IN'); }
+
+  document.querySelectorAll('input[name=mode]').forEach(r => r.addEventListener('change', () => {
+    get('sharedNote').classList.toggle('d-none', form.mode.value !== 'shared');
+    estimate();
+  }));
+  document.querySelectorAll('input[name=truck_type_id]').forEach(r => r.addEventListener('change', estimate));
+  get('weight_tons').addEventListener('input', estimate);
+  form.addEventListener('location:selected', estimate);
+
+  function estimate(){
+    const oid = get('origin_id').value, did = get('dest_id').value;
+    const tt = form.truck_type_id.value, w = get('weight_tons').value, mode = form.mode.value;
+    if(!oid || !did || !tt) return;
+    const params = new URLSearchParams({origin_id:oid, destination_id:did, truck_type_id:tt, weight_tons:w||1, mode});
+    fetch("{% url 'shipper:fare_estimate' %}?"+params).then(r=>r.json()).then(d=>{
+      if(!d.ok) return;
+      get('fareBox').classList.add('d-none');
+      get('fareBreak').classList.remove('d-none');
+      get('fBase').textContent = inr(d.base);
+      get('fDistLbl').textContent = `Distance · ${d.distance_km} km × ${inr(d.per_km_rate)}/km`;
+      get('fDist').textContent = inr(d.distance);
+      get('fGst').textContent = inr(d.gst);
+      get('fTotal').textContent = inr(d.total);
+      get('fSurRow').classList.toggle('d-none', !d.surcharge);
+      if(d.surcharge){ get('fSurLbl').textContent = d.surcharge_label || 'Surcharge'; get('fSur').textContent = inr(d.surcharge); }
+      get('shareRow').classList.toggle('d-none', mode!=='shared');
+      if(mode==='shared') get('sharePct').textContent = Math.round(d.share_pct*100)+'%';
+    });
+  }
+</script>
+{% endblock %}
